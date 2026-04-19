@@ -116,6 +116,10 @@ vim.o.showmode = false
 --  See `:help 'clipboard'`
 vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 
+-- Clipboard Ctrl + C mapping
+vim.keymap.set('n', '<C-c>', '"+y', { noremap = true })
+vim.keymap.set('v', '<C-c>', '"+y', { noremap = true })
+
 -- Enable break indent
 vim.o.breakindent = true
 
