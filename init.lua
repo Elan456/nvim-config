@@ -226,6 +226,11 @@ vim.keymap.set('t', '<C-k>', [[<C-\><C-n><C-w>k]])
 vim.keymap.set('n', '<leader>tv', ':vert term<CR>')
 vim.keymap.set('n', '<leader>th', ':term<CR>')
 
+-- Avoid a `which-key` overlap warning from Neovim's built-in `gc` / `gcc` comment maps.
+pcall(vim.keymap.del, 'n', 'gcc')
+vim.keymap.set('n', 'gC', function()
+  return require('vim._comment').operator() .. '_'
+end, { expr = true, desc = 'Toggle comment line' })
 
 -- NOTE: Some terminals have colliding keymaps or are not able to send distinct keycodes
 -- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
@@ -853,13 +858,15 @@ require('lazy').setup({
       --
       -- Examples:
       --  - va)  - [V]isually select [A]round [)]paren
-      --  - yinq - [Y]ank [I]nside [I]next [Q]uote
+      --  - yi'  - [Y]ank [I]nside [']quote
       --  - ci'  - [C]hange [I]nside [']quote
       require('mini.ai').setup {
-        -- NOTE: Avoid conflicts with the built-in incremental selection mappings on Neovim>=0.12 (see `:help treesitter-incremental-selection`)
+        -- Disable the optional next/last textobjects to avoid `which-key` overlap warnings.
         mappings = {
-          around_next = 'aa',
-          inside_next = 'ii',
+          around_next = '',
+          inside_next = '',
+          around_last = '',
+          inside_last = '',
         },
         n_lines = 500,
       }
@@ -869,7 +876,12 @@ require('lazy').setup({
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
+      require('mini.surround').setup {
+        mappings = {
+          suffix_last = '',
+          suffix_next = '',
+        },
+      }
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
